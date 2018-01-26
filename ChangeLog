@@ -1,3 +1,57 @@
+2018-01-25  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Release 0.0.2
+
+2018-01-24  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/checks.R (runEnqueueSanityChecks): New helper function
+	* R/enqueue.R (enqueueJobs): Call new helper function
+	* man/getDataDirectory.Rd: Added documentation
+
+2018-01-23  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/enqueue.R (enqueueJobs): Quit if no reverse dependencies
+
+2018-01-22  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/enqueue.R (enqueueDepends): New (still experimental) helper
+	function to enqueue (aggregate) dependencies
+
+	* R/dequeue.R (dequeueDepends):  New (still experimental) helper
+	function to dequeue (aggregate) dependencies
+
+	* man/dequeueJobs.Rd: Documentation
+	* man/enqueueJobs.Rd: Ditto
+
+	* NAMESPACE: Added two imports from 'utils' plus one from 'tools'
+
+2018-01-20  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/dequeue.R (dequeueJobs): Now uses system2() instead
+
+	* R/enqueue.R (enqueueJobs): Consider more repos than just CRAN (#4)
+
+	* inst/scripts/xvfb-run-safe: No longer use $HOME (#2)
+
+2018-01-19  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Date, Version): New minor version
+
+	* R/checks.R (runSanityChecks): Check for xvfb-run and
+	xvfb-run-safe only on Linux, set 'xvfb' value accordingly (#3)
+
+	* R/dequeue.R (dequeueJobs): Use 'xvfb' value; create working
+	directories as needed
+
+	* DESCRIPTION (SystemRequirements): No need to mention xvfb-run,
+	* DESCRIPTION (OS_type): Removed
+
+2018-01-16  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/dequeue.R (dequeueJobs): No need for wget
+	* DESCRIPTION (SystemRequirements): No need to mention wget, but mention
+	xvfb-run at least while it is being used unconditionally
+
 2018-01-09  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Date, Version): First CRAN Release 0.0.1

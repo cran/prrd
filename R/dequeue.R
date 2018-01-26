@@ -26,11 +26,24 @@ dequeueJobs <- function(package, directory, exclude="") {
     hostname <- Sys.info()[["nodename"]]
     wd <- cwd <- getwd()
     debug <- verbose <- FALSE
+    env <- character()
 
     if (!is.null(cfg <- getConfig())) {
         if ("setup" %in% names(cfg)) source(cfg$setup)
-        if ("workdir" %in% names(cfg)) wd <- cfg$workdir
-        if ("libdir" %in% names(cfg)) Sys.setenv("R_LIBS_USER"=cfg$libdir)
+        if ("workdir" %in% names(cfg)) {
+            wd <- cfg$workdir
+            if (!dir.exists(wd)) {
+                dir.create(wd)
+            }
+        }
+        if ("libdir" %in% names(cfg)) {
+            ## setting the environment variable works with littler, but not with RScript
+            Sys.setenv("R_LIBS_USER"=cfg$libdir)
+            if (!dir.exists(cfg$libdir)) {
+                dir.create(cfg$libdir)
+            }
+            env <- paste0("R_LIBS=\"", cfg$libdir, "\"")
+        }
         if ("verbose" %in% names(cfg)) verbose <- cfg$verbose == "true"
         if ("debug" %in% names(cfg)) debug <- cfg$debug == "true"
     }
@@ -60,18 +73,24 @@ dequeueJobs <- function(package, directory, exclude="") {
             if (file.exists(pkgfile)) {
                 if (verbose) cat("Seeing file", pkgfile, "\n")
             } else {
-                ##download.file(pathpkg, pkg, quiet=TRUE)
-                dl <- download.packages(tok[1], ".", method="wget", quiet=TRUE)
+                dl <- download.packages(tok[1], ".", quiet=TRUE)
                 pkgfile <- basename(dl[,2])
                 if (verbose) cat("Downloaded ", pkgfile, "\n")
             }
 
-            cmd <- paste("xvfb-run-safe --server-args=\"-screen 0 1024x768x24\" ",
-                         "R",  #rbinary,         # R or RD
-                         " CMD check --no-manual --no-vignettes ", pkgfile, " 2>&1 > ",
-                         pkgfile, ".log", sep="")
-            if (debug) print(cmd)
-            rc <- system(cmd)
+            cmd <- "R"
+            args <- c("CMD", "check", "--no-manual", "--no-vignettes", pkgfile)
+            if (.pkgenv[["xvfb"]] != "") {
+                splits <- strsplit(.pkgenv[["xvfb"]], " ")[[1]]
+                args <- c(splits[-1], cmd, args)
+                cmd <- splits[1]
+            }
+            logfile <- paste0(pkgfile, ".log")
+            if (debug) {
+                print(cmd)
+                print(args)
+            }
+            rc <- system2(cmd, args=args, env=env, stdout=logfile, stderr=logfile)
             if (debug) print(rc)
 
             setwd(cwd)
@@ -113,3 +132,34 @@ dequeueJobs <- function(package, directory, exclude="") {
     dbDisconnect(con)
     lst
 }
+
+##' @rdname dequeueJobs
+dequeueDepends <- function(package, directory) {
+    db <- getQueueFile(package=package, path=directory)
+    q <- ensure_queue("depends", db = db)
+
+    if (!is.null(cfg <- getConfig())) {
+        if ("setup" %in% names(cfg)) source(cfg$setup)
+        if ("libdir" %in% names(cfg)) {
+            .libPaths(cfg$libdir)
+            Sys.setenv("R_LIBS_USER"=cfg$libdir)
+            if (!dir.exists(cfg$libdir)) {
+                dir.create(cfg$libdir)
+            }
+        }
+    }
+
+
+    ## work down messages, if any
+    while (!is.null(msg <- try_consume(q))) {
+        pkg <- msg$message
+        try(install.packages(pkg)) # rc is useless
+        ack(msg)
+    }
+    requeue_failed_messages(q)
+    lst <- list_messages(q)
+    lst
+}
+
+
+globalVariables(c(".pkgenv")) # pacify R CMD check

@@ -1,8 +1,8 @@
 Package: prrd
 Type: Package
 Title: Parallel Runs of Reverse Depends
-Version: 0.0.1
-Date: 2018-01-09
+Version: 0.0.2
+Date: 2018-01-25
 Author: Dirk Eddelbuettel
 Maintainer: Dirk Eddelbuettel <edd@debian.org>
 Description: Reverse depends for a given package are queued such that multiple
@@ -10,10 +10,8 @@ Description: Reverse depends for a given package are queued such that multiple
 License: GPL (>= 2)
 Imports: config, liteq, data.table, crayon, DBI, RSQLite
 Suggests: docopt
-SystemRequirements: A 'wget' binary in the PATH.
-OS_type: unix
 RoxygenNote: 6.0.1
 NeedsCompilation: no
-Packaged: 2018-01-09 12:03:13.536318 UTC; edd
+Packaged: 2018-01-26 00:44:41.276648 UTC; edd
 Repository: CRAN
-Date/Publication: 2018-01-16 18:03:22 UTC
+Date/Publication: 2018-01-26 04:16:04 UTC
