@@ -5,14 +5,14 @@
 \alias{dequeueDepends}
 \title{Dequeue and run reverse-dependency checks, possibly in parallel}
 \usage{
-dequeueJobs(package, directory, exclude = "")
+dequeueJobs(package, directory, exclude = NULL)
 
 dequeueDepends(package, directory)
 }
 \arguments{
 \item{package}{A character variable denoting a package}
 
-\item{directory}{A character variable denoting a directory}
+\item{directory}{A character variable denoting a directory for the queuefile}
 
 \item{exclude}{An optional character variable denoting an exclusion set csv file.}
 }

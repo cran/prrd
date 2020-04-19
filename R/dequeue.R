@@ -6,11 +6,11 @@
 ##' file is on a network drive, this should may also work across multiple machines.
 ##' @title Dequeue and run reverse-dependency checks, possibly in parallel
 ##' @param package A character variable denoting a package
-##' @param directory A character variable denoting a directory
+##' @param directory A character variable denoting a directory for the queuefile
 ##' @param exclude An optional character variable denoting an exclusion set csv file.
 ##' @return A queue is create as a side effect, its elements are returned invisibly
 ##' @author Dirk Eddelbuettel
-dequeueJobs <- function(package, directory, exclude="") {
+dequeueJobs <- function(package, directory, exclude=NULL) {
 
     runSanityChecks()                       # (currently) checks (only) for xvfb-run-safe
 
@@ -21,6 +21,7 @@ dequeueJobs <- function(package, directory, exclude="") {
 
     con <- getDatabaseConnection(db)        # we re-use the liteq db for our results
     createTable(con)
+    meta <- dbGetQuery(con, "select * from metadata")
 
     pid <- Sys.getpid()
     hostname <- Sys.info()[["nodename"]]
@@ -49,9 +50,11 @@ dequeueJobs <- function(package, directory, exclude="") {
     }
 
     good <- bad <- skipped <- 0
-    exclset <- if (exclude != "") getExclusionSet(exclude) else character()
+    exclset <- if (!is.null(exclude)) getExclusionSet(exclude) else character()
     if (verbose) print(exclset)
 
+    cat("## Reverse depends check of", blue(meta[1,"package"]), blue(meta[1,"version"]), "\n")
+    
     ## work down messages, if any
     while (!is.null(msg <- try_consume(q))) {
         starttime <- Sys.time()
