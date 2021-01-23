@@ -49,7 +49,9 @@ enqueueJobs <- function(package, directory) {
 
     con <- getDatabaseConnection(db)        # we re-use the liteq db for our results
     createRunDataTable(con)
-    dat <- data.frame(package=package, version=format(packageVersion(package)), date=format(Sys.Date()))
+    dat <- data.frame(package=package,
+                      version=format(packageVersion(package)),
+                      date=format(Sys.Date()))
     dbWriteTable(con, "metadata", dat, append=TRUE)
     dbDisconnect(con)
     

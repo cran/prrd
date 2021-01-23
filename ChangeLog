@@ -1,9 +1,49 @@
+2021-01-23  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version, Date): Release 0.0.4
+
+	* README.md: Updated several URLs to https
+
+2021-01-17  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/summarise.R (.runExtended): Use foghorn for all installation states
+
+2020-12-29  Dirk Eddelbuettel  <edd@debian.org>
+
+        * .github/workflows/ci.yaml: Add CI runner using r-ci
+	* README.md: Add new CI badge
+
+2020-11-15  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/summarise.R (multiple): Make summaries a little more robust
+
+2020-10-26  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Date, Version): Roll minor version
+
+	* .travis.yml: Switch to focal and BSPM
+
+2020-10-27  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/summarise.R (summariseQueue): Even more compact results display
+
+2020-04-23  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/scripts/summariseJobs.r: Queuefile is now an optional argument
+
+2020-04-22  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/summarise.R (summariseQueue): More compact results display
+
 2020-04-19  Dirk Eddelbuettel  <edd@debian.org>
 
         * DESCRIPTION (Version, Date): Release 0.0.3
 
         * R/dequeue.R: Dequeuing now shows package and version at start
         * R/summarise.R: Minor summary tweak
+
+	* man/getDatabaseConnection.Rd: Alias createRunDataTable()
+	* man/enqueueJobs.Rd: Wrap \dontrun{} around example
 
 2020-04-18  Dirk Eddelbuettel  <edd@debian.org>
 
@@ -13,6 +53,11 @@
         * inst/scripts/enqueueDepends.r: Idem
         * inst/scripts/enqueueJobs.r: Idem
         * inst/scripts/dequeueJobs.r: Idem
+
+	* R/db.R (createRunDataTable): New function to record meta data
+	* R/enqueue.R (enqueueJobs): Record meta data for run
+
+	* NAMESPACE: Import utils::packageVersion
 
 2020-04-08  Dirk Eddelbuettel  <edd@debian.org>
 
