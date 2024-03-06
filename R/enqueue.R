@@ -21,10 +21,11 @@ enqueueJobs <- function(package, directory, dbfile="", addfailed=FALSE) {
     if (!is.null(cfg <- getConfig())) {
         if ("setup" %in% names(cfg)) source(cfg$setup)
         if ("libdir" %in% names(cfg)) {
-            .libPaths(cfg$libdir)
-            Sys.setenv("R_LIBS_USER"=cfg$libdir)
-            if (!dir.exists(cfg$libdir)) {
-                dir.create(cfg$libdir)
+            fullLibDir <- normalizePath(cfg$libdir)
+            .libPaths(fullLibDir)
+            Sys.setenv("R_LIBS_USER"=fullLibDir)
+            if (!dir.exists(fullLibDir)) {
+                dir.create(fullLibDir)
             }
         }
     }
@@ -56,8 +57,9 @@ enqueueJobs <- function(package, directory, dbfile="", addfailed=FALSE) {
     } else {
         newpkgs <- setdiff(pkgset, res$package)
         if (addfailed) {
-            failed <- res[ result == 1, .(package)]
-            pkgset <- data.table(Package=unique(sort(c(failed$package, newpkgs))))
+            failed <- res[ result != 0, .(Package = package)]
+            failed <- AP[failed, on="Package"][!is.na(Version)]
+            pkgset <- data.table(Package=unique(sort(c(failed$Package, newpkgs))))
         } else {
             pkgset <- data.table(Package=newpkgs)
         }
@@ -92,10 +94,11 @@ enqueueDepends <- function(package, directory) {
     if (!is.null(cfg <- getConfig())) {
         if ("setup" %in% names(cfg)) source(cfg$setup)
         if ("libdir" %in% names(cfg)) {
-            .libPaths(cfg$libdir)
-            Sys.setenv("R_LIBS_USER"=cfg$libdir)
-            if (!dir.exists(cfg$libdir)) {
-                dir.create(cfg$libdir)
+            fullLibDir <- normalizePath(cfg$libdir)
+            .libPaths(fullLibDir)
+            Sys.setenv("R_LIBS_USER"=fullLibDir)
+            if (!dir.exists(fullLibDir)) {
+                dir.create(fullLibDir)
             }
         }
     }

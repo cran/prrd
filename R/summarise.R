@@ -46,6 +46,13 @@ summariseQueue <- function(package, directory, dbfile="", extended=FALSE, foghor
     cat("Average of", round(dts/nrow(res), digits=3), "secs relative to",
         format(round(res[, mean(runtime)], digits=3)), "secs using",
         nrow(res[, .N, by=runner]), "runners\n")
+    if (nrow(jobs) > 0) {
+        totsecs <- (jobs[, max(id)] - nrow(res)) * dts/nrow(res) # via (total_jobs - done_jobs) * avg_time
+        tothrs <- totsecs / 3600
+        cat("Anticipated completion in", if (tothrs > 24) paste(round(tothrs/24,2), "days")
+                                         else (paste(round(tothrs,2), "hours")), "on",
+            format(totsecs + Sys.time(), "%d %b at %H:%M"), "\n")
+    }    
     cat("\nFailed packages: ", paste(unique(sort(res[result==1, .(package)][[1]])), collapse=", "), "\n")
     cat("\nSkipped packages: ", paste(res[result==2, .(package)][[1]], collapse=", "), "\n")
     cat("\n")
@@ -61,7 +68,7 @@ summariseQueue <- function(package, directory, dbfile="", extended=FALSE, foghor
         cat("None still scheduled\n")
     }
 
-    if (extended && (res[result==0,.N] > 0)) {
+    if (extended && (res[result==1,.N] > 0)) {
         ext <- .runExtended(res, foghorn)
         invisible(return(list(res=res, ext=ext)))
     }
@@ -127,11 +134,12 @@ summariseQueue <- function(package, directory, dbfile="", extended=FALSE, foghor
         }
         if ("libdir" %in% names(cfg)) {
             ## setting the environment variable works with littler, but not with RScript
-            Sys.setenv("R_LIBS_USER"=cfg$libdir)
-            if (!dir.exists(cfg$libdir)) {
-                dir.create(cfg$libdir)
+            fullLibDir <- normalizePath(cfg$libdir)
+            Sys.setenv("R_LIBS_USER"=fullLibDir)
+            if (!dir.exists(fullLibDir)) {
+                dir.create(fullLibDir)
             }
-            env <- paste0("R_LIBS=\"", cfg$libdir, "\"")
+            env <- paste0("R_LIBS=\"", fullLibDir, "\"")
         }
         if ("verbose" %in% names(cfg)) verbose <- cfg$verbose == "true"
         if ("debug" %in% names(cfg)) debug <- cfg$debug == "true"
@@ -152,13 +160,18 @@ summariseQueue <- function(package, directory, dbfile="", extended=FALSE, foghor
     failed[hasCheckLog==TRUE & hasInstallLog==TRUE & missingPkg=="", badInstall:=.grepInstallationFailed(wd, package), by=package]
 
     if (foghorn && requireNamespace("foghorn", quietly=TRUE)) {
-        failed[, c("error", "fail", "warn", "note", "ok", "hasOtherIssue") :=
-                     data.frame(foghorn::cran_results(pkg=package)[1,-1], src="crandb"),
-	       by=package]
+        cran <- data.table(tools::CRAN_package_db())
+        data.table::setnames(cran, c("Package", "Version"), c("package", "version"))
+        cran <- cran[,.(package,version)]
+        failed <- cran[failed, on="package"][is.na(version)==FALSE]
+        pkgs <- failed[, package]
+        fi <- data.table(foghorn::cran_results(pkg=pkgs, src="crandb"), key="package")
+        failed <- fi[failed, on="package"]
+        data.table::setnames(failed, "has_other_issues", "hasOtherIssues")
     }
 
     cat("\nError summary:\n")
-    print(failed[, -c(2:3)], nrows=nrow(failed))
+    print(failed[, -c(3:4)], nrows=nrow(failed))
     invisible(failed)
 }
 
@@ -166,4 +179,4 @@ summariseQueue <- function(package, directory, dbfile="", extended=FALSE, foghor
 globalVariables(c(".", ".N", "result", "starttime", "endtime",
                   "times", "runtime", "runner", "status",
                   ":=", "badInstall", "hasCheckLog", "hasInstallLog",
-                  "missingPkg", "package"))
+                  "missingPkg", "package", "id"))

@@ -1,11 +1,11 @@
 #!/usr/bin/env r
 
 ## configuration for docopt
-doc <- paste0("Usage: dequeueJobs.r [-q QUEUE] [-e EXCP] [-h] [-x] PACKAGE
+doc <- paste0("Usage: dequeueJobs.r [-q QUEUE] [-e EXCP] [-d DATE] [-h] [-x] PACKAGE
 
 -q --queue QUEUE      set queue directory [default: ", getOption("prrd.queue_directory", "."), "]
 -e --exclude EXCL     exclusion set filename [default: ]
--d --date DATE        exclusion set filename [default: ", format(Sys.Date()), "]
+-d --date DATE        set date queue was written [default: ", format(Sys.Date()), "]
 -h --help             show this help text
 -x --usage            show help and short example usage")
 
@@ -21,4 +21,4 @@ See https://dirk.eddelbuettel.com/code/prrd.html for more information.\n")
     q("no")
 }
 
-prrd::dequeueJobs(opt$PACKAGE, opt$queue, opt$exclude, opt$date)
+prrd::dequeueJobs(opt$PACKAGE, opt$queue, opt$exclude, format(anytime::anydate(opt$date)))

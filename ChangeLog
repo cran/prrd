@@ -1,3 +1,79 @@
+2024-03-03  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/summarise.R (.runExtended): Refactor 'foghorn' use to one call
+
+2024-02-19  Dirk Eddelbuettel  <edd@debian.org>
+
+	* .github/workflows/ci.yaml (jobs): Update to actions/checkout@v4,
+	add r-ci-setup actions
+
+2023-12-23    <dirk@cloud-devel.wu.ac.at>
+
+	* R/summarise.R (.runExtended): Ensure no-longer-on-CRAN packages
+	are filtered out before calling `foghorn` on it
+
+2023-06-30  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/summarise.R (.runExtended): Correct foghorn call
+
+2023-06-29  Dirk Eddelbuettel  <edd@debian.org>
+
+	* README.md: Add r-universe badge
+
+2023-06-16  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/summarise.R (summariseQueue): Also display anticipated completion time
+
+2023-04-10  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Date, Version): Roll micro version and date
+
+	* inst/scripts/dequeueJobs.r: Correct date argument help text, use anydate
+	* DESCRIPTION: Suggest anytime package
+
+2023-02-21  Joshua Ulrich  <josh.m.ulrich@gmail.com>
+
+	* R/dequeue.R (dequeueJobs, dequeueDepends): Add relative path support
+	for 'libdir' and 'workdir' arguments
+	* R/enqueue.R (enqueueJobs, enqueueDepends): Idem
+	* R/summarise.R (summariseQueue): Idem
+	* R/utils.R: Update docs to include relative path support for
+	'libdir' and 'workdir' arguments
+	* man/getDataDirectory.Rd: Idem
+
+2022-11-08  Dirk Eddelbuettel  <edd@debian.org>
+
+	* .github/workflows/ci.yaml (jobs): Update to actions/checkout@v3
+
+2022-01-07  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Date, Version): Roll minor version
+
+	* R/enqueue.R (enqueueJobs): When adding 'failed' packages from prior
+	run, ensure selected packages are currently available
+
+2021-10-12  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Date, Version): Roll minor version
+
+	* R/enqueue.R (enqueueJobs): 'addfailed' now includes skipped
+
+2021-10-03  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Date, Version): Roll minor version
+
+	* inst/scripts/dequeueJobs.r: Add missing docopt argument entry
+	for date argument
+
+2021-09-30  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/summarise.R (summariseQueue): Only run extended summary when
+	we have failures (correcting test to count failures not success)
+
+2021-09-22  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version, Date): Release 0.0.5
+
 2021-09-21  Dirk Eddelbuettel  <edd@debian.org>
 
 	* R/enqueue.R (enqueueJobs): Support new option to add failed jobs
