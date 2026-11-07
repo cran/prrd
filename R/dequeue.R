@@ -11,6 +11,7 @@
 ##' @param date Optional character variable describing a date (as part of the queue
 ##' file, default is current date.
 ##' @return A queue is create as a side effect, its elements are returned invisibly
+##' in verbose mode only.
 ##' @author Dirk Eddelbuettel
 dequeueJobs <- function(package, directory, exclude=NULL, date=format(Sys.Date())) {
 
@@ -20,11 +21,8 @@ dequeueJobs <- function(package, directory, exclude=NULL, date=format(Sys.Date()
 
     db <- getQueueFile(package=package, path=directory, date=date)
     q <- ensure_queue("jobs", db = db)
-
-    con <- getDatabaseConnection(db)        # we re-use the liteq db for our results
-    createTable(con)
-    meta <- dbGetQuery(con, "select * from metadata")
-    on.exit(dbDisconnect(con))
+    createTableLocked(db)
+    meta <- dbGetQueryWrapped(db, "select * from metadata")
 
     pid <- Sys.getpid()
     hostname <- Sys.info()[["nodename"]]
@@ -130,13 +128,13 @@ dequeueJobs <- function(package, directory, exclude=NULL, date=format(Sys.Date()
                           runner=pid,
                           host=hostname)
         if (debug) print(row)
-
-        insertRow(con, row)
+        insertRowLocked(db, row)
     }
-    requeue_failed_messages(q)
-    lst <- list_messages(q)
-    if (verbose) print(lst)
-    lst
+    if (verbose) {
+       requeue_failed_messages(q)
+       lst <- list_messages(q)
+    }
+    NULL
 }
 
 ##' @rdname dequeueJobs

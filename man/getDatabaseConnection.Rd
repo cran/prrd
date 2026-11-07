@@ -5,6 +5,13 @@
 \alias{createTable}
 \alias{insertRow}
 \alias{createRunDataTable}
+\alias{dbWithWriteTransaction}
+\alias{dbExecuteLocked}
+\alias{dbGetQueryWrapped}
+\alias{createTableLocked}
+\alias{insertRowLocked}
+\alias{createRunDataTableLocked}
+\alias{dbWriteTableLocked}
 \title{Database Helper Functions}
 \usage{
 getDatabaseConnection(file)
@@ -14,6 +21,20 @@ createTable(con)
 insertRow(con, df)
 
 createRunDataTable(con)
+
+dbWithWriteTransaction(con, code, retry = TRUE)
+
+dbExecuteLocked(file, code, ...)
+
+dbGetQueryWrapped(file, code)
+
+createTableLocked(file)
+
+insertRowLocked(file, df)
+
+createRunDataTableLocked(file)
+
+dbWriteTableLocked(file, table, df, append = FALSE, overwrite = TRUE)
 }
 \arguments{
 \item{file}{A character variable pointing to a sqlite3 file}
@@ -21,6 +42,18 @@ createRunDataTable(con)
 \item{con}{A database connection object}
 
 \item{df}{A one-row data.frame with results to be appended}
+
+\item{code}{Exression to be executed}
+
+\item{retry}{Boolean value, defaults to \sQuote{TRUE}}
+
+\item{...}{Additional parameters, currently unused}
+
+\item{table}{Character value with the database table to write to}
+
+\item{append}{Boolean value whether to append to table or not, depends to \sQuote{FALSE}}
+
+\item{overwrite}{Boolean value whether to overwrite table or not, depends to \sQuote{TRUE}}
 }
 \value{
 A connection object

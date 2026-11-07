@@ -1,3 +1,54 @@
+2026-11-07  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Release 0.1.0
+
+	* README.md: Small edits / updates
+
+2026-11-06  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll micro version and date
+
+	* R/db.R: Adopt approach from liteq to use 'BEGIN IMMEDIATE' blocks
+	for locked operations, together with two wrappers gratefully borrows
+	* R/db.R: Added variants of the reader/writer functions that use the
+	new sqlite-internal locking approach
+	* R/dequeue.R (dequeueJobs): Use new locking approach for two write
+	operations
+	* R/enqueue.R: If needed, create two directories recursively; use new
+	locked functions
+	* R/utils.R: Small improvement in how default data / queue directory
+	value is retrieved
+
+	* man/dequeueJobs.Rd: Update help page
+	* man/getDataDirectory.Rd: Idem
+	* man/getDatabaseConnection.Rd: Idem
+	* man/dbLock.Rd: New help page
+
+	* DESCRIPTION (Imports): No longer import 'filelock'
+	* NAMESPACE: Idem
+
+	* DESCRIPTION (Description): Expand text, mention 'liteq' for queue
+	management and acknowledge sqlite parallel writers locking approach used
+
+2026-10-22  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/db.R: Set write-ahead log, switch timeout setter to pragma
+	* R/dequeue.R: More explicit locking
+	* R/summarise.R: Tighter summary print
+
+2026-10-20  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/checks.R: Ensure locale is set
+
+2026-10-19  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll micro version and date
+
+	* R/dequeue.R (dequeueJobs): Use lock on write operations
+
+	* DESCRIPTION (Imports): Add filelock
+	* NAMESPACE: Idem
+
 2026-08-27  Dirk Eddelbuettel  <edd@debian.org>
 
         * DESCRIPTION (Version, Date): Release 0.0.7
